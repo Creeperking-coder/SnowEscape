@@ -137,6 +137,53 @@ class Buttons:
         win.blit(self.img,self.rect)
         return True
 
+class Smiler:
+    smilers = []
+    def __init__(self):
+        self.x = random.randint(100,700)
+        self.y = random.randint(100,700)
+        self.width = 13
+        self.height = 15
+        self.img = pygame.image.load("Smiler.png")
+        self.img = pygame.transform.scale(self.img, (self.width, self.height))
+        self.state = "attack"
+        self.stage = 0
+        self.timer = 0
+        self.flicker = 0
+        self.flickermax = 1
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        Smiler.smilers.append(self)
+    def tick(self, win):
+
+        if self.state == "attack":
+            self.timer += random.randint(0,2)
+            if self.timer >= 400:
+                self.stage += 1
+                self.timer = 0
+                self.x = random.randint(100, 700)
+                self.y = random.randint(100, 700)
+
+        if self.stage >= 5:
+            return False
+
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.flickermax = 1
+        if self.stage == 1:
+            self.flickermax = 20
+        elif self.stage == 2:
+            self.flickermax = 10
+        elif self.stage == 3:
+            self.flickermax = 5
+        elif self.stage == 4:
+            self.flickermax = 3
+
+
+        self.flicker += 1
+        if self.flicker >= self.flickermax:
+            self.flicker = 0
+            win.blit(self.img,self.rect)
+        return True
+
 class Snow:
     snowflakes = []
     def __init__(self):
@@ -263,6 +310,8 @@ t = Tree(7, 600-96/2, 200-96/2)
 
 #props
 p = Artifact(4,400,400,"TwigDoll.png",13,15,"stickdoll")
+#p = Artifact(7,400,400,"Photograph.png",,,"photograph")
+p = Artifact(4,400,400,"Book.png",22,20,"book")
 
 player = Player()
 
@@ -288,8 +337,13 @@ t = transfer(750,100,50,100,6,5)
 t = transfer(750,250,50,100,5,7)
 t = transfer(750,250,50,100,7,5)
 
+t = transfer(750,400,50,100,5,8)
+t = transfer(750,400,50,100,8,5)
+
+#p = Prop(8,400,0,"road.png",100,800)
 
 button = Buttons()
+
 area = 0
 run = True
 
@@ -308,6 +362,7 @@ while run == True:
     for t in Tree.trees:
         if area == t.area:
             t.tick(win)
+
     for p in Prop.props:
         if area == p.area:
             p.tick(win)
@@ -317,6 +372,8 @@ while run == True:
             m.tick(win)
             if m.rect.colliderect(player.rect) == True:
                 area = m.next_area
+                for i in Smiler.smilers:
+                    i.stage = 0
                 player.x -= (m.x+m.width/2 - player.x)
                 player.y -= (m.y+m.height/2 - player.y)
                 player.tick(win)
@@ -328,6 +385,8 @@ while run == True:
             a.tick(win)
 
     run = button.tick(win)
+    for i in Smiler.smilers:
+        run = i.tick(win)
 
     for i in Snow.snowflakes:
         i.tick(win)
