@@ -28,6 +28,9 @@ class Player:
         self.yvel = 0
         self.pvelx = 1
         self.pvely = 1
+        self.stickDoll = False
+        self.photograph = False
+        self.book = False
         self.lampx = self.x + 5 + self.xvel * 10
         self.lampy = self.y - 5
         self.range = 15
@@ -134,7 +137,6 @@ class Buttons:
         win.blit(self.img,self.rect)
         return True
 
-
 class Snow:
     snowflakes = []
     def __init__(self):
@@ -211,17 +213,31 @@ class Prop:
 
 class Artifact:
     artifacts = []
-    def __init__(self,area,x,y,image,width,height):
+    def __init__(self,area,x,y,image,width,height,type):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.area = area
+        self.type = type
         self.img = pygame.image.load(image)
         self.img = pygame.transform.scale(self.img, (self.width, self.height))
         self.rect = pygame.Rect(self.x,self.y,self.width,self.height)
         Artifact.artifacts.append(self)
     def tick(self,win):
+
+        if player.rect.colliderect(self.rect) == True:
+            if self.type == "stickdoll":
+                player.stickDoll = True
+                s = Sticks()
+            elif self.type == "photograph":
+                player.photograph = True
+                s = Smiler()
+            elif self.type == "book":
+                player.book = True
+                d = Dream()
+            Artifact.artifacts.remove(self)
+            return
 
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
         win.blit(self.img,self.rect)
@@ -246,7 +262,7 @@ t = Tree(7, 200-96/2, 200-96/2)
 t = Tree(7, 600-96/2, 200-96/2)
 
 #props
-p = Artifact(4,400,400,"TwigDoll.png",13,15)
+p = Artifact(4,400,400,"TwigDoll.png",13,15,"stickdoll")
 
 player = Player()
 
@@ -276,6 +292,7 @@ t = transfer(750,250,50,100,7,5)
 button = Buttons()
 area = 0
 run = True
+
 while run == True:
 
     pygame.time.delay(25)
