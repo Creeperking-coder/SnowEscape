@@ -155,13 +155,25 @@ class Smiler:
         Smiler.smilers.append(self)
     def tick(self, win):
 
-        if self.state == "attack":
+        if self.state == "docile":
+            self.timer += random.randint(0,2)
+            if self.timer >= 1000:
+                self.state = "attack"
+                self.timer = 0
+
+        elif self.state == "attack":
             self.timer += random.randint(0,2)
             if self.timer >= 400:
                 self.stage += 1
                 self.timer = 0
                 self.x = random.randint(100, 700)
                 self.y = random.randint(100, 700)
+            if self.rect.colliderect(player.lamprect) == True:
+                self.stage -= 1
+                if self.stage <= 0:
+                    self.state = "docile"
+                    self.timer = 0
+
 
         if self.stage >= 5:
             return False
@@ -293,6 +305,8 @@ for i in range(50):
     l = Snow()
 for i in range(10):
     t = Tree(0, random.randint(20, 680), random.randint(20, 680))
+    t = Tree(9, random.randint(20, 300), random.randint(20, 680))
+    t = Tree(9, random.randint(500, 680), random.randint(20, 680))
 for i in range(15):
     t = Tree(1, random.randint(20, 680), random.randint(20, 680))
 for i in range(20):
@@ -308,10 +322,18 @@ t = Tree(7, 300-96/2, 500-96/2)
 t = Tree(7, 200-96/2, 200-96/2)
 t = Tree(7, 600-96/2, 200-96/2)
 
+t = Tree(10,400,500)
+t = Tree(10,280,450)
+t = Tree(10,200,350)
+t = Tree(10,290,240)
+t = Tree(10,400,200)
+t = Tree(10,500,300)
+t = Tree(10,400,360)
+
 #props
-p = Artifact(4,400,400,"TwigDoll.png",13,15,"stickdoll")
-#p = Artifact(7,400,400,"Photograph.png",,,"photograph")
-p = Artifact(4,400,400,"Book.png",22,20,"book")
+p = Artifact(7,400,500,"TwigDoll.png",13,15,"stickdoll")
+p = Artifact(10,400,400,"Book.png",22,20,"book")
+p = Artifact(4,400,400,"Photograph.png",21,19,"photograph")
 
 player = Player()
 
@@ -340,11 +362,21 @@ t = transfer(750,250,50,100,7,5)
 t = transfer(750,400,50,100,5,8)
 t = transfer(750,400,50,100,8,5)
 
-#p = Prop(8,400,0,"road.png",100,800)
+t = transfer(0,400,50,100,6,9)
+t = transfer(0,400,50,100,9,6)
+
+t = transfer(750,400,50,100,9,10)
+t = transfer(750,400,50,100,10,9)
+
+t = transfer(400,0,100,50,9,11)
+t = transfer(400,0,100,50,11,9)
+
+p = Prop(9,400,0,"road.png",100,800)
+p = Prop(11,400,0,"road.png",100,800)
 
 button = Buttons()
 
-area = 0
+area = 11
 run = True
 
 while run == True:
